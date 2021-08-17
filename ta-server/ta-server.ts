@@ -53,7 +53,12 @@ taserver.get('/teste', function (req: express.Request, res: express.Response) {
 
 taserver.get("/sendmail", function (req: express.Request, res: express.Response) {
   var user: Aluno = <Aluno> Data[0];
-  sendMail(user);
+  console.log(user.email)
+  try {
+    sendMail(user);
+  } catch (err) {
+    console.log(err)
+  }
 })
 
 var server = taserver.listen(3000, function () {
@@ -61,30 +66,32 @@ var server = taserver.listen(3000, function () {
 })
 
 async function sendMail(user: Aluno): Promise<void> {
+
   let testAccount = await nodemailer.createTestAccount();
 
   const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false,
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
     auth: {
-      user: testAccount.user,
-      pass: testAccount.pass
+      user: "arantauro@gmail.com",
+      pass: "ess2020a"
     }
   });
 
   const mailOptions = {
-    from: `Charles, "<cgcc@cin.ufpe.br>"`,
-    to: `${user.email}`,
+    from: `charlesgabriel10@gmail.com`,
+    to: user.email,
     subject: "Hello ✔",
     text: "Hello world?",
     html: "<b>Hello world?</b>",
   };
 
   let info = await transporter.sendMail(mailOptions);
-  
+
   console.log("Message sent: %s", info.messageId);
 }
+
 
 function closeServer(): void {
   server.close();
