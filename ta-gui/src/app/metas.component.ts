@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgModule } from '@angular/core';
+import { isEmpty } from 'rxjs/operators';
 
 import { Aluno } from '../../../common/aluno';
 import { AlunoService } from './aluno.service';
@@ -20,6 +21,11 @@ import { AlunoService } from './aluno.service';
          (msg) => { alert(msg.message); }
       );
     }
+	calcularMedia(aluno: Aluno) : string {
+		if(!aluno.metas['requisitos'] || !aluno.metas['gerDeConfiguracao'])return "";
+		var media = (Number(aluno.metas['requisitos']) + Number(aluno.metas['gerDeConfiguracao']))/2;
+	  	return isNaN(media) ? "" : String(media);
+	}
 
     ngOnInit(): void {
       this.alunoService.getAlunos()
