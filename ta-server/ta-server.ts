@@ -59,6 +59,7 @@ taserver.get("/sendmail", function (req: express.Request, res: express.Response)
   } catch (err) {
     console.log(err)
   }
+  res.send();
 })
 
 var server = taserver.listen(3000, function () {
@@ -70,26 +71,22 @@ async function sendMail(user: Aluno): Promise<void> {
   let testAccount = await nodemailer.createTestAccount();
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
+    service: 'Gmail',
     auth: {
-      user: "arantauro@gmail.com",
+      user: "ta.ess.2020.2@gmail.com",
       pass: "ess2020a"
     }
   });
 
   const mailOptions = {
-    from: `charlesgabriel10@gmail.com`,
+    from: `ta.ess.2020.2@gmail.com`,
     to: user.email,
     subject: "Hello ✔",
-    text: "Hello world?",
-    html: "<b>Hello world?</b>",
+    text: "",
+  //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
   };
 
   let info = await transporter.sendMail(mailOptions);
-
-  console.log("Message sent: %s", info.messageId);
 }
 
 
