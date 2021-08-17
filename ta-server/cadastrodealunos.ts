@@ -26,4 +26,9 @@ export class CadastroDeAlunos {
     getAlunos(): Aluno[] {
      return this.alunos;
    }
+
+   sendEMail(): String {
+
+    return "a"
+   }
 }

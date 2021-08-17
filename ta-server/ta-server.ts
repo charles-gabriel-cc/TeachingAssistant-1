@@ -1,8 +1,13 @@
 import express = require('express');
 import bodyParser = require("body-parser");
+import cors = require("cors")
+import nodemailer = require("nodemailer")
 
 import {Aluno} from '../common/aluno';
 import {CadastroDeAlunos} from './cadastrodealunos';
+
+
+const Users = require('../data');
 
 var taserver = express();
 
@@ -42,9 +47,40 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   }
 })
 
+taserver.get('/teste', function (req: express.Request, res: express.Response) {
+  res.send({"sucess": "O email foi enviado"});
+})
+
+taserver.post("/sendmail", (req, res) => {
+  console.log("request came");
+  var user: Aluno = <Aluno> req.body;
+  sendMail(user => {
+    if (err) {
+      console.log(err);
+      res.status(400);
+      res.send({ error: "Failed to send email" });
+    } else {
+      console.log("Email has been sent");
+      res.send(info);
+    }
+  });
+});
+
 var server = taserver.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
+
+const sendMail = (user: Aluno) => {
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "<sender email>",
+      pass: "<password>"
+    }
+  });
+}
 
 function closeServer(): void {
   server.close();
