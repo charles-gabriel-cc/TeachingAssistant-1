@@ -1,0 +1,11 @@
+[
+    {
+        "nome": "Charles",
+        "cpf": "123",
+        "email": "cgcc@cin.ufpe.br",
+        "metas": {
+            "requisitos":"1",
+            "gerDeConfiguracao":"2"
+        }
+    }
+]

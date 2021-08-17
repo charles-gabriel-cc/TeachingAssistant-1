@@ -7,7 +7,7 @@ import {Aluno} from '../common/aluno';
 import {CadastroDeAlunos} from './cadastrodealunos';
 
 
-const Users = require('../data');
+const Data = require('./data');
 
 var taserver = express();
 
@@ -51,35 +51,39 @@ taserver.get('/teste', function (req: express.Request, res: express.Response) {
   res.send({"sucess": "O email foi enviado"});
 })
 
-taserver.post("/sendmail", (req, res) => {
-  console.log("request came");
-  var user: Aluno = <Aluno> req.body;
-  sendMail(user => {
-    if (err) {
-      console.log(err);
-      res.status(400);
-      res.send({ error: "Failed to send email" });
-    } else {
-      console.log("Email has been sent");
-      res.send(info);
-    }
-  });
-});
+taserver.get("/sendmail", function (req: express.Request, res: express.Response) {
+  var user: Aluno = <Aluno> Data[0];
+  sendMail(user);
+})
 
 var server = taserver.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
 
-const sendMail = (user: Aluno) => {
+async function sendMail(user: Aluno): Promise<void> {
+  let testAccount = await nodemailer.createTestAccount();
+
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp.ethereal.email",
     port: 587,
     secure: false,
     auth: {
-      user: "<sender email>",
-      pass: "<password>"
+      user: testAccount.user,
+      pass: testAccount.pass
     }
   });
+
+  const mailOptions = {
+    from: `Charles, "<cgcc@cin.ufpe.br>"`,
+    to: `${user.email}`,
+    subject: "Hello ✔",
+    text: "Hello world?",
+    html: "<b>Hello world?</b>",
+  };
+
+  let info = await transporter.sendMail(mailOptions);
+  
+  console.log("Message sent: %s", info.messageId);
 }
 
 function closeServer(): void {
