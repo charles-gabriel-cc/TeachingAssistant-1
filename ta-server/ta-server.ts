@@ -35,6 +35,7 @@ taserver.post('/aluno', function (req: express.Request, res: express.Response) {
   } else {
     res.send({"failure": "O aluno não pode ser cadastrado"});
   }
+  console.log(cadastro.alunos);
 })
 
 taserver.put('/aluno', function (req: express.Request, res: express.Response) {
@@ -47,15 +48,15 @@ taserver.put('/aluno', function (req: express.Request, res: express.Response) {
   }
 })
 
-taserver.get('/teste', function (req: express.Request, res: express.Response) {
-  res.send({"sucess": "O email foi enviado"});
-})
 
-taserver.get("/sendmail", function (req: express.Request, res: express.Response) {
+taserver.post("/sendmail", function (req: express.Request, res: express.Response) {
   var user: Aluno = <Aluno> Data[0];
   console.log(user.email)
   try {
-    sendMail(user);
+    for (let i = 0; i < cadastro.alunos.length; i++) {
+      const aluno : Aluno = cadastro.alunos[i];
+      sendMail(aluno, aluno.nome, req.body.text);
+    }
   } catch (err) {
     console.log(err)
   }
@@ -66,7 +67,7 @@ var server = taserver.listen(3000, function () {
   console.log('Example app listening on port 3000!')
 })
 
-async function sendMail(user: Aluno): Promise<void> {
+async function sendMail(aluno: Aluno, subject: string,text: string): Promise<void> {
 
   let testAccount = await nodemailer.createTestAccount();
 
@@ -80,10 +81,10 @@ async function sendMail(user: Aluno): Promise<void> {
 
   const mailOptions = {
     from: `ta.ess.2020.2@gmail.com`,
-    to: user.email,
-    subject: "Hello ✔",
-    text: "",
-  //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
+    to: aluno.email,
+    subject: subject,
+    text: text,
+    //html: "<b></b>"(html subrescreve o text, mas da pra usar pra fazer msg formatadas)
   };
 
   let info = await transporter.sendMail(mailOptions);
